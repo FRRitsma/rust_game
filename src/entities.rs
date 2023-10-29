@@ -1,188 +1,71 @@
-trait Coordinate {
-    fn get_min(&self) -> f32;
-    fn get_max(&self) -> f32;
+use crate::movement;
+use movement::CoordinateMovement;
+use movement::BoundaryBehavior;
+use ggez;
+use ggez::{event, glam};
+use ggez::graphics::{self, Canvas, DrawParam, Image, Color};
+use ggez::Context;
+use ggez::GameResult;
+use glam::{Vec2, vec2};
+use crate::movement::Position;
+
+pub trait Entity{
+    fn is_alive(&self) -> bool;
+    fn position(&self) -> Vec2;
+    fn draw(&self, ctx: &mut Context) -> GameResult;
 }
 
-trait Position: Coordinate {
-    fn get_position(&self) -> f32;
+pub struct MovingEntity{
+    pub x_axis: CoordinateMovement,
+    pub y_axis: CoordinateMovement,
 }
 
-trait Velocity: Position + Coordinate {
-    fn get_velocity(&self) -> f32;
-}
+impl Entity for MovingEntity{
+    fn is_alive(&self) -> bool {
+        true
+    }
+    fn position(&self) -> Vec2 {
+        Vec2::new(self.x_axis.get_position(), self.y_axis.get_position())
+    }
+    fn draw(&self, ctx: &mut Context) -> GameResult {
+        // // Set the draw color to the entity's color
+        // graphics::set_color(ctx, self.color)?;
+        //
+        // // Calculate the position for the circle
+        // let circle_center = self.position + na::Vector2::new(self.radius, self.radius);
+        //
+        // // Draw a filled circle
+        // let circle = graphics::Mesh::new_circle(
+        //     ctx,
+        //     graphics::DrawMode::fill(),
+        //     circle_center,
+        //     self.radius,
+        //     2.0, // Line width (ignored for fill)
+        //     self.color,
+        // )?;
+        //
+        // graphics::draw(ctx, &circle, DrawParam::new())?;
 
-trait Movement: Velocity + Position + Coordinate {
-    fn set_position(&mut self, position: f32){
-        self.position = position
+        Ok(())
     }
 }
 
-// Implement for structs:
-struct MovementObject{
-    min: f32,
-    max: f32,
-    position: f32,
-    velocity: f32,
-}
-
-impl Coordinate for MovementObject {
-    fn get_min(&self) -> f32 {
-        return self.min;
+impl MovingEntity{
+    pub fn new(
+        x_axis: CoordinateMovement, y_axis: CoordinateMovement
+    ) -> Self{
+        MovingEntity{
+            x_axis,
+            y_axis,
+        }
     }
-
-    fn get_max(&self) -> f32 {
-        return self.max;
+    pub fn update(&mut self){
+        self.x_axis.update();
+        self.y_axis.update();
     }
 }
 
-impl Position for MovementObject{
-    fn get_position(&self) -> f32 {
-        self.position
-    }
+#[test]
+fn test_moving_object_happy_flow(){
+    // let _ = MovingObject::new();
 }
-
-
-//
-
-//
-//
-// pub enum BoundaryBehavior {
-//     Bounce,
-//     Wrap,
-//     Disappear,
-// }
-//
-// struct Boundaries{
-//     x_min: f64,
-//     x_max: f64,
-//     y_min: f64,
-//     y_max: f64,
-// }
-//
-// trait Movement: Position + Velocity {
-//
-//     fn set_x_position(&mut self, x: f64);
-//
-//     fn set_y_position(&mut self, x: f64);
-//
-//     fn set_x_velocity(&mut self, dx: f64);
-//
-//     fn set_y_velocity(&mut self, dy: f64);
-//
-//     fn get_boundary_behavior(&self) -> BoundaryBehavior;
-//
-//     fn move_x(&mut self){
-//         if self.is_at_x_boundary(){
-//             match self.get_boundary_behavior() {
-//                 BoundaryBehavior::Bounce => {
-//                     self.set_x_velocity(-self.x_vol());
-//                     let new_x = self.x_pos() + self.x_vol();
-//                     self.set_x_position(new_x);
-//                 },
-//                 BoundaryBehavior::Wrap => {
-//                     let new_x = (self.x_pos() + self.x_vol()) % 800.0;
-//                     self.set_x_position(new_x);
-//                 },
-//                 BoundaryBehavior::Disappear => {},
-//             }
-//         }
-//         else{
-//             let new_x = self.x_pos() + self.x_vol();
-//             self.set_x_position(new_x);
-//         }
-//     }
-//
-//     fn move_y(&mut self){
-//         if self.is_at_y_boundary(){
-//             self.set_y_velocity(-self.y_vol());
-//         }
-//         let new_y = self.y_pos() + self.y_vol();
-//         self.set_y_position(new_y);
-//     }
-//
-//         fn is_at_x_boundary(&self) -> bool{
-//         // TODO: Fix hardcodes!
-//         return self.x_pos() + self.x_vol() > 800.0 || self.x_pos() + self.x_vol() < 0.0
-//     }
-//
-//     fn is_at_y_boundary(&self) -> bool{
-//         // TODO: Fix hardcodes!
-//         return self.y_pos() + self.y_vol() > 600.0 || self.y_pos() + self.y_vol() < 0.0
-//     }
-//
-//     fn move_object(&mut self) {
-//         self.move_x();
-//         self.move_y();
-//     }
-// }
-//
-//
-// pub struct MovingObject {
-//     pub x_position: f64,
-//     pub y_position: f64,
-//     x_velocity: f64,
-//     y_velocity: f64,
-// }
-//
-// impl Position for MovingObject {
-//     fn x_pos(&self) -> f64 {
-//         self.x_position
-//     }
-//
-//     fn y_pos(&self) -> f64 {
-//         self.y_position
-//     }
-// }
-//
-// impl Velocity for MovingObject {
-//     fn x_vol(&self) -> f64 {
-//         self.x_velocity
-//     }
-//
-//     fn y_vol(&self) -> f64 {
-//         self.y_velocity
-//     }
-// }
-//
-// impl Movement for MovingObject {
-//
-//     fn set_x_position(&mut self, x: f64) {
-//         self.x_position = x;
-//     }
-//
-//     fn set_y_position(&mut self, y: f64) {
-//         self.y_position = y;
-//     }
-//
-//     fn set_x_velocity(&mut self, dx: f64) {
-//         self.x_velocity = dx;
-//     }
-//
-//     fn set_y_velocity(&mut self, dy: f64) {
-//         self.y_velocity = dy;
-//     }
-//
-//     fn get_boundary_behavior(&self) -> BoundaryBehavior {
-//         BoundaryBehavior::Wrap
-//     }
-//
-// }
-//
-// impl MovingObject{
-//     pub fn new(x_position: f64,
-//                y_position: f64,
-//                x_velocity: f64,
-//                y_velocity: f64,) -> Self{
-//         MovingObject {
-//             x_position,
-//             y_position,
-//             x_velocity,
-//             y_velocity,
-//         }
-//     }
-//
-//     pub fn update(&mut self){
-//         self.move_object()
-//     }
-// }
-//
