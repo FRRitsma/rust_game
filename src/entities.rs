@@ -1,23 +1,32 @@
 use crate::movement;
 use movement::CoordinateMovement;
-use movement::BoundaryBehavior;
 use ggez;
-use ggez::{event, glam};
-use ggez::graphics::{self, Canvas, DrawParam, Image, Color};
-use ggez::Context;
-use ggez::GameResult;
-use glam::{Vec2, vec2};
+use ggez::{Context, GameResult, glam};
+use ggez::graphics::{self, Color, Drawable, Canvas, DrawParam, GraphicsContext, Rect, Mesh};
+use ggez::context::Has;
+use glam::{Vec2};
 use crate::movement::Position;
 
 pub trait Entity{
     fn is_alive(&self) -> bool;
     fn position(&self) -> Vec2;
-    fn draw(&self, ctx: &mut Context) -> GameResult;
 }
 
 pub struct MovingEntity{
     pub x_axis: CoordinateMovement,
     pub y_axis: CoordinateMovement,
+    rectangle: Mesh,
+}
+
+impl Drawable for MovingEntity{
+
+    fn draw(&self, canvas: &mut Canvas, param: impl Into<DrawParam>){
+        canvas.draw(&self.rectangle, param);
+    }
+
+    fn dimensions(&self, gfx: &impl Has<GraphicsContext>) -> Option<Rect> {
+        Some(Rect::new(10.0, 10.0, 10.0, 10.0))
+    }
 }
 
 impl Entity for MovingEntity{
@@ -27,36 +36,21 @@ impl Entity for MovingEntity{
     fn position(&self) -> Vec2 {
         Vec2::new(self.x_axis.get_position(), self.y_axis.get_position())
     }
-    fn draw(&self, ctx: &mut Context) -> GameResult {
-        // // Set the draw color to the entity's color
-        // graphics::set_color(ctx, self.color)?;
-        //
-        // // Calculate the position for the circle
-        // let circle_center = self.position + na::Vector2::new(self.radius, self.radius);
-        //
-        // // Draw a filled circle
-        // let circle = graphics::Mesh::new_circle(
-        //     ctx,
-        //     graphics::DrawMode::fill(),
-        //     circle_center,
-        //     self.radius,
-        //     2.0, // Line width (ignored for fill)
-        //     self.color,
-        // )?;
-        //
-        // graphics::draw(ctx, &circle, DrawParam::new())?;
-
-        Ok(())
-    }
 }
 
 impl MovingEntity{
-    pub fn new(
+    pub fn new(ctx: &mut Context,
         x_axis: CoordinateMovement, y_axis: CoordinateMovement
     ) -> Self{
         MovingEntity{
             x_axis,
             y_axis,
+            rectangle: graphics::Mesh::new_rectangle(
+            ctx,
+            graphics::DrawMode::fill(),
+            graphics::Rect::new(10.0, 10.0, 10.0, 10.0),
+            Color::WHITE,
+        ).unwrap()
         }
     }
     pub fn update(&mut self){

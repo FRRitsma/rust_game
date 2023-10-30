@@ -3,10 +3,11 @@
 use ggez::{
     event,
     glam::*,
-    graphics::{self, Color},
+    graphics::{self, Color, Drawable},
     input::keyboard::{KeyCode, KeyInput},
     Context, GameResult,
 };
+use ggez::graphics::DrawParam;
 
 use my_game::entities::{MovingEntity, Entity};
 use my_game::movement::{BoundaryBehavior, CoordinateMovement};
@@ -28,7 +29,7 @@ impl MainState {
         )?;
         let x_axis: CoordinateMovement = CoordinateMovement::new(0.0,800.0, 0.0, 3.0, BoundaryBehavior::Bounce);
         let y_axis: CoordinateMovement = CoordinateMovement::new(0.0,600.0, 0.0, 2.0, BoundaryBehavior::Bounce);
-        let moving_entity: MovingEntity = MovingEntity::new(x_axis, y_axis);
+        let moving_entity: MovingEntity = MovingEntity::new(ctx, x_axis, y_axis);
         Ok(MainState { moving_entity, circle })
     }
 }
@@ -43,7 +44,8 @@ impl event::EventHandler<ggez::GameError> for MainState {
         let mut canvas =
             graphics::Canvas::from_frame(ctx, graphics::Color::from([0.1, 0.2, 0.3, 1.0]));
 
-        canvas.draw(&self.circle, self.moving_entity.position());
+        // canvas.draw(&self.circle, self.moving_entity.position());
+        self.moving_entity.draw(&mut canvas, DrawParam::default());
         canvas.finish(ctx)?;
         Ok(())
     }
