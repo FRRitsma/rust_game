@@ -1,143 +1,105 @@
-trait Position {
-    fn x_pos(&self) -> f64;
-    fn y_pos(&self) -> f64;
+use crate::movement;
+use crate::movement::Position;
+use ggez;
+use ggez::context::Has;
+use ggez::graphics::{self, Canvas, Color, DrawParam, Drawable, GraphicsContext, Mesh, Rect};
+use ggez::input::keyboard::{KeyCode, KeyInput};
+use ggez::{glam, Context, GameResult};
+use glam::Vec2;
+use movement::{CoordinateMovement, Velocity};
+
+pub trait Entity {
+    fn is_alive(&self) -> bool;
+    fn position(&self) -> Vec2;
 }
 
-trait Velocity {
-    fn x_vol(&self) -> f64;
-    fn y_vol(&self) -> f64;
+pub trait Controllable {
+    fn process_control(&mut self);
 }
 
-pub enum BoundaryBehavior {
-    Bounce,
-    Wrap,
-    Disappear,
+pub struct MovingEntity {
+    pub x_axis: CoordinateMovement,
+    pub y_axis: CoordinateMovement,
+    rectangle: Mesh,
 }
 
-trait Movement: Position + Velocity {
+impl Drawable for MovingEntity {
+    fn draw(&self, canvas: &mut Canvas, _: impl Into<DrawParam>) {
+        canvas.draw(&self.rectangle, self.position());
+    }
+    fn dimensions(&self, gfx: &impl Has<GraphicsContext>) -> Option<Rect> {
+        Some(Rect::new(10.0, 10.0, 10.0, 10.0))
+    }
+}
 
-    fn set_x_position(&mut self, x: f64);
+impl Entity for MovingEntity {
+    fn is_alive(&self) -> bool {
+        true
+    }
+    fn position(&self) -> Vec2 {
+        Vec2::new(self.x_axis.get_position(), self.y_axis.get_position())
+    }
+}
 
-    fn set_y_position(&mut self, x: f64);
+impl MovingEntity {
+    pub fn new(ctx: &mut Context, x_axis: CoordinateMovement, y_axis: CoordinateMovement) -> Self {
+        MovingEntity {
+            x_axis,
+            y_axis,
+            rectangle: Mesh::new_rectangle(
+                ctx,
+                graphics::DrawMode::fill(),
+                Rect::new(10.0, 10.0, 10.0, 10.0),
+                Color::WHITE,
+            )
+            .unwrap(),
+        }
+    }
+    pub fn update(&mut self) {
+        self.x_axis.update();
+        self.y_axis.update();
+    }
+}
 
-    fn set_x_velocity(&mut self, dx: f64);
+pub struct ControllableMovingEntity {
+    pub moving_entity: MovingEntity,
+}
 
-    fn set_y_velocity(&mut self, dy: f64);
+impl ControllableMovingEntity {
+    pub fn new(ctx: &mut Context, x_axis: CoordinateMovement, y_axis: CoordinateMovement) -> Self {
+        ControllableMovingEntity {
+            moving_entity: MovingEntity::new(ctx, x_axis, y_axis),
+        }
+    }
 
-    fn get_boundary_behavior(&self) -> BoundaryBehavior;
-
-    fn move_x(&mut self){
-        if self.is_at_x_boundary(){
-            match self.get_boundary_behavior() {
-                BoundaryBehavior::Bounce => {
-                    self.set_x_velocity(-self.x_vol());
-                    let new_x = self.x_pos() + self.x_vol();
-                    self.set_x_position(new_x);
-                },
-                BoundaryBehavior::Wrap => {
-                    let new_x = (self.x_pos() + self.x_vol()) % 800.0;
-                    self.set_x_position(new_x);
-                },
-                BoundaryBehavior::Disappear => {},
+    pub fn apply_controllable(&mut self, keyinput: KeyInput) {
+        match keyinput.keycode {
+            Some(KeyCode::Up) => {
+                self.moving_entity
+                    .y_axis
+                    .set_velocity(self.moving_entity.y_axis.get_velocity() - 0.2);
             }
-        }
-        else{
-            let new_x = self.x_pos() + self.x_vol();
-            self.set_x_position(new_x);
-        }
-    }
-
-    fn move_y(&mut self){
-        if self.is_at_y_boundary(){
-            self.set_y_velocity(-self.y_vol());
-        }
-        let new_y = self.y_pos() + self.y_vol();
-        self.set_y_position(new_y);
-    }
-
-        fn is_at_x_boundary(&self) -> bool{
-        // TODO: Fix hardcodes!
-        return self.x_pos() + self.x_vol() > 800.0 || self.x_pos() + self.x_vol() < 0.0
-    }
-
-    fn is_at_y_boundary(&self) -> bool{
-        // TODO: Fix hardcodes!
-        return self.y_pos() + self.y_vol() > 600.0 || self.y_pos() + self.y_vol() < 0.0
-    }
-
-    fn move_object(&mut self) {
-        self.move_x();
-        self.move_y();
-    }
-}
-
-
-pub struct MovingObject {
-    pub x_position: f64,
-    pub y_position: f64,
-    x_velocity: f64,
-    y_velocity: f64,
-}
-
-impl Position for MovingObject {
-    fn x_pos(&self) -> f64 {
-        self.x_position
-    }
-
-    fn y_pos(&self) -> f64 {
-        self.y_position
-    }
-}
-
-impl Velocity for MovingObject {
-    fn x_vol(&self) -> f64 {
-        self.x_velocity
-    }
-
-    fn y_vol(&self) -> f64 {
-        self.y_velocity
-    }
-}
-
-impl Movement for MovingObject {
-
-    fn set_x_position(&mut self, x: f64) {
-        self.x_position = x;
-    }
-
-    fn set_y_position(&mut self, y: f64) {
-        self.y_position = y;
-    }
-
-    fn set_x_velocity(&mut self, dx: f64) {
-        self.x_velocity = dx;
-    }
-
-    fn set_y_velocity(&mut self, dy: f64) {
-        self.y_velocity = dy;
-    }
-
-    fn get_boundary_behavior(&self) -> BoundaryBehavior {
-        BoundaryBehavior::Wrap
-    }
-
-}
-
-impl MovingObject{
-    pub fn new(x_position: f64,
-               y_position: f64,
-               x_velocity: f64,
-               y_velocity: f64,) -> Self{
-        MovingObject {
-            x_position,
-            y_position,
-            x_velocity,
-            y_velocity,
+            Some(KeyCode::Down) => {
+                self.moving_entity
+                    .y_axis
+                    .set_velocity(self.moving_entity.y_axis.get_velocity() + 0.2);
+            }
+            Some(KeyCode::Right) => {
+                self.moving_entity
+                    .x_axis
+                    .set_velocity(self.moving_entity.x_axis.get_velocity() + 0.2);
+            }
+            Some(KeyCode::Left) => {
+                self.moving_entity
+                    .x_axis
+                    .set_velocity(self.moving_entity.x_axis.get_velocity() - 0.2);
+            }
+            _ => {}
         }
     }
-
-    pub fn update(&mut self){
-        self.move_object()
-    }
 }
 
+#[test]
+fn test_moving_object_happy_flow() {
+    // let _ = MovingObject::new();
+}
