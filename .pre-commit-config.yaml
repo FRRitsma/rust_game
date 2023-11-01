@@ -10,6 +10,10 @@ repos:
   rev: v4.5.0 # replace with a specific git tag or commit hash
   hooks:
   - id: check-toml
+  - id: check-yaml
+  - id: check-added-large-files
+    args: [ '--maxkb=1000' ]
+
 
 
 
