@@ -8,6 +8,11 @@ use ggez::{glam, Context, GameResult};
 use glam::Vec2;
 use movement::{CoordinateMovement, Velocity};
 
+pub trait Dimension {
+    // Current implementation: xmin, xmax, ymin, ymax
+    fn dimension(&self) -> (f32, f32, f32, f32);
+}
+
 pub trait Entity {
     fn is_alive(&self) -> bool;
     fn position(&self) -> Vec2;
@@ -72,27 +77,37 @@ impl ControllableMovingEntity {
         }
     }
 
-    pub fn apply_controllable(&mut self, keyinput: KeyInput) {
+    pub fn apply_controllable_down(&mut self, keyinput: KeyInput) {
         match keyinput.keycode {
             Some(KeyCode::Up) => {
-                self.moving_entity
-                    .y_axis
-                    .set_velocity(self.moving_entity.y_axis.get_velocity() - 0.2);
+                self.moving_entity.y_axis.set_velocity(-2.0);
             }
             Some(KeyCode::Down) => {
-                self.moving_entity
-                    .y_axis
-                    .set_velocity(self.moving_entity.y_axis.get_velocity() + 0.2);
+                self.moving_entity.y_axis.set_velocity(2.0);
             }
             Some(KeyCode::Right) => {
-                self.moving_entity
-                    .x_axis
-                    .set_velocity(self.moving_entity.x_axis.get_velocity() + 0.2);
+                self.moving_entity.x_axis.set_velocity(2.0);
             }
             Some(KeyCode::Left) => {
-                self.moving_entity
-                    .x_axis
-                    .set_velocity(self.moving_entity.x_axis.get_velocity() - 0.2);
+                self.moving_entity.x_axis.set_velocity(-2.0);
+            }
+            _ => {}
+        }
+    }
+
+    pub fn apply_controllable_up(&mut self, keyinput: KeyInput) {
+        match keyinput.keycode {
+            Some(KeyCode::Up) => {
+                self.moving_entity.y_axis.set_velocity(0.0);
+            }
+            Some(KeyCode::Down) => {
+                self.moving_entity.y_axis.set_velocity(0.0);
+            }
+            Some(KeyCode::Right) => {
+                self.moving_entity.x_axis.set_velocity(0.0);
+            }
+            Some(KeyCode::Left) => {
+                self.moving_entity.x_axis.set_velocity(0.0);
             }
             _ => {}
         }

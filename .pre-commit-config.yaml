@@ -8,6 +8,11 @@ repos:
   rev: v4.5.0 # replace with a specific git tag or commit hash
   hooks:
   - id: check-toml
+#- repo: https://github.com/est31/cargo-udeps
+#  rev: master # replace with a specific git tag or commit hash
+#  hooks:
+#  - id: cargo-udeps
+
 ##  - id: forbid-crlf
 #  - id: forbid-tabs
 #  - id: insert-license

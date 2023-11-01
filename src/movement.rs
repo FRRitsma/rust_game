@@ -1,18 +1,15 @@
-pub trait Coordinate {
+pub trait Position {
     fn get_min(&self) -> f32;
     fn get_max(&self) -> f32;
-}
-
-pub trait Position: Coordinate {
     fn get_position(&self) -> f32;
 }
 
-pub trait Velocity: Position + Coordinate {
+pub trait Velocity {
     fn get_velocity(&self) -> f32;
     fn set_velocity(&mut self, velocity: f32);
 }
 
-trait Movement: Velocity + Position + Coordinate {
+trait Movement: Velocity + Position {
     fn get_boundary_behavior(&self) -> BoundaryBehavior;
     fn is_at_boundary(&self) -> bool;
 }
@@ -33,18 +30,13 @@ pub struct CoordinateMovement {
     boundary_behavior: BoundaryBehavior,
 }
 
-impl Coordinate for CoordinateMovement {
+impl Position for CoordinateMovement {
     fn get_min(&self) -> f32 {
         return self.min;
     }
-
     fn get_max(&self) -> f32 {
         return self.max;
     }
-}
-
-impl Position for CoordinateMovement {
-    // TODO: Make private
     fn get_position(&self) -> f32 {
         return self.position;
     }
@@ -63,7 +55,6 @@ impl Movement for CoordinateMovement {
     fn get_boundary_behavior(&self) -> BoundaryBehavior {
         self.boundary_behavior.clone()
     }
-
     fn is_at_boundary(&self) -> bool {
         let next_position = self.position + self.velocity;
         return next_position > self.get_max() || next_position < self.get_min();

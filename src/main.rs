@@ -25,9 +25,9 @@ impl MainState {
             CoordinateMovement::new(0.0, 600.0, 0.0, 2.0, BoundaryBehavior::Bounce);
         entity_vec.push(ControllableMovingEntity::new(ctx, x_axis, y_axis));
         let x_axis: CoordinateMovement =
-            CoordinateMovement::new(0.0, 800.0, 0.0, -5.0, BoundaryBehavior::Collide);
+            CoordinateMovement::new(0.0, 800.0, 100.0, -5.0, BoundaryBehavior::Collide);
         let y_axis: CoordinateMovement =
-            CoordinateMovement::new(0.0, 600.0, 0.0, 3.0, BoundaryBehavior::Collide);
+            CoordinateMovement::new(0.0, 600.0, 100.0, 3.0, BoundaryBehavior::Collide);
         entity_vec.push(ControllableMovingEntity::new(ctx, x_axis, y_axis));
 
         Ok(MainState { entity_vec })
@@ -62,7 +62,11 @@ impl event::EventHandler<ggez::GameError> for MainState {
         keyinput: KeyInput,
         _repeat: bool,
     ) -> GameResult {
-        self.entity_vec[0].apply_controllable(keyinput);
+        self.entity_vec[0].apply_controllable_down(keyinput);
+        Ok(())
+    }
+    fn key_up_event(&mut self, _ctx: &mut Context, keyinput: KeyInput) -> GameResult {
+        self.entity_vec[0].apply_controllable_up(keyinput);
         Ok(())
     }
 }
