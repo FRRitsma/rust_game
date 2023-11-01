@@ -14,7 +14,7 @@ pub trait Dimension {
 }
 
 pub trait Entity {
-    fn is_alive(&self) -> bool;
+    fn terminate(&self) -> bool;
     fn position(&self) -> Vec2;
 }
 
@@ -38,8 +38,8 @@ impl Drawable for MovingEntity {
 }
 
 impl Entity for MovingEntity {
-    fn is_alive(&self) -> bool {
-        true
+    fn terminate(&self) -> bool {
+        false
     }
     fn position(&self) -> Vec2 {
         Vec2::new(self.x_axis.get_position(), self.y_axis.get_position())
