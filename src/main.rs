@@ -5,11 +5,11 @@ use ggez::{
     event,
     glam::*,
     graphics::{self, Drawable},
-    input::keyboard::{KeyCode, KeyInput},
+    input::keyboard::KeyInput,
     Context, GameResult,
 };
 
-use my_game::entities::{ControllableMovingEntity, MovingEntity};
+use my_game::entities::ControllableMovingEntity;
 use my_game::movement::{BoundaryBehavior, CoordinateMovement};
 
 struct MainState {

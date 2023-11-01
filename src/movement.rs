@@ -32,19 +32,19 @@ pub struct CoordinateMovement {
 
 impl Position for CoordinateMovement {
     fn get_min(&self) -> f32 {
-        return self.min;
+        self.min
     }
     fn get_max(&self) -> f32 {
-        return self.max;
+        self.max
     }
     fn get_position(&self) -> f32 {
-        return self.position;
+        self.position
     }
 }
 
 impl Velocity for CoordinateMovement {
     fn get_velocity(&self) -> f32 {
-        return self.velocity;
+        self.velocity
     }
     fn set_velocity(&mut self, velocity: f32) {
         self.velocity = velocity;
@@ -53,11 +53,11 @@ impl Velocity for CoordinateMovement {
 
 impl Movement for CoordinateMovement {
     fn get_boundary_behavior(&self) -> BoundaryBehavior {
-        self.boundary_behavior.clone()
+        self.boundary_behavior
     }
     fn is_at_boundary(&self) -> bool {
         let next_position = self.position + self.velocity;
-        return next_position > self.get_max() || next_position < self.get_min();
+        next_position > self.get_max() || next_position < self.get_min()
     }
 }
 

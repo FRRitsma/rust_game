@@ -1,12 +1,11 @@
 // TODO: Write implemenation for collisions
 // Grid to prevent all vs. all comparison
 // Only check moving against moving and moving against static, not static vs. static
-
 use mockall::automock;
 
 #[automock]
 pub trait Dimension {
-    fn dimension(&self) -> (f32, f32, f32, f32); // (xmin, xmax, ymin, max)
+    fn dimension(&self) -> (f32, f32, f32, f32); // (xmin, xmax, ymin, ymax)
 }
 
 fn collision_left_right(left_min1: f32, right_min2: f32, right_max2: f32) -> bool {

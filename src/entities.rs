@@ -4,13 +4,17 @@ use ggez;
 use ggez::context::Has;
 use ggez::graphics::{self, Canvas, Color, DrawParam, Drawable, GraphicsContext, Mesh, Rect};
 use ggez::input::keyboard::{KeyCode, KeyInput};
-use ggez::{glam, Context, GameResult};
+use ggez::{glam, Context};
 use glam::Vec2;
 use movement::{CoordinateMovement, Velocity};
 
 pub trait Entity {
     fn terminate(&self) -> bool;
     fn position(&self) -> Vec2;
+}
+
+pub trait SpawnEntity {
+    fn spawn<T>(&self, entity_vec: &mut Vec<T>);
 }
 
 pub trait Controllable {
@@ -27,7 +31,7 @@ impl Drawable for MovingEntity {
     fn draw(&self, canvas: &mut Canvas, _: impl Into<DrawParam>) {
         canvas.draw(&self.rectangle, self.position());
     }
-    fn dimensions(&self, gfx: &impl Has<GraphicsContext>) -> Option<Rect> {
+    fn dimensions(&self, _gfx: &impl Has<GraphicsContext>) -> Option<Rect> {
         Some(Rect::new(10.0, 10.0, 10.0, 10.0))
     }
 }
