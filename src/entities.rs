@@ -13,10 +13,6 @@ pub trait Entity {
     fn position(&self) -> Vec2;
 }
 
-pub trait SpawnEntity {
-    fn spawn<T>(&self, entity_vec: &mut Vec<T>);
-}
-
 pub trait Controllable {
     fn process_control(&mut self);
 }

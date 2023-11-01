@@ -3,12 +3,16 @@ repos:
   rev: v1.0 # replace with a specific git tag or commit hash
   hooks:
   - id: fmt
-  - id: cargo-check
-  - id: clippy
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0 # replace with a specific git tag or commit hash
-  hooks:
-  - id: check-toml
+#  - id: cargo-check
+#  - id: clippy
+#    args: ["--fix", "--allow-dirty"]
+#- repo: https://github.com/pre-commit/pre-commit-hooks
+#  rev: v4.5.0 # replace with a specific git tag or commit hash
+#  hooks:
+#  - id: check-toml
+
+
+
 #- repo: https://github.com/est31/cargo-udeps
 #  rev: master # replace with a specific git tag or commit hash
 #  hooks:

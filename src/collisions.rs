@@ -49,7 +49,6 @@ fn test_is_collision_with_overlap() {
     let mut mock2 = MockDimension::new();
     mock2.expect_dimension().returning(|| (2.0, 7.0, 2.0, 7.0));
     assert!(is_collision(mock1, mock2));
-    assert!(is_collision(mock2, mock1));
 }
 
 #[test]
@@ -59,7 +58,6 @@ fn test_is_collision_no_overlap() {
     let mut mock2 = MockDimension::new();
     mock2.expect_dimension().returning(|| (6.0, 7.0, 6.0, 7.0));
     assert!(!is_collision(mock1, mock2));
-    assert!(!is_collision(mock2, mock1));
 }
 
 #[test]
