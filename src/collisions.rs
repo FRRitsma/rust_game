@@ -38,7 +38,7 @@ fn test_collision_left_right_should_not_collide() {
 }
 
 #[test]
-fn test_collision_one_dimension_should_collide_symmetrical() {
+fn test_collision_one_dimension_should_collide() {
     assert!(collision_one_dimension(0.0, 5.0, 3.0, 10.0));
     assert!(collision_one_dimension(3.0, 10.0, 0.0, 5.0));
 }

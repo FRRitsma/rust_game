@@ -8,11 +8,6 @@ use ggez::{glam, Context, GameResult};
 use glam::Vec2;
 use movement::{CoordinateMovement, Velocity};
 
-pub trait Dimension {
-    // Current implementation: xmin, xmax, ymin, ymax
-    fn dimension(&self) -> (f32, f32, f32, f32);
-}
-
 pub trait Entity {
     fn terminate(&self) -> bool;
     fn position(&self) -> Vec2;
