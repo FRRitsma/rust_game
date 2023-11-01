@@ -13,14 +13,11 @@ pub trait Entity {
     fn position(&self) -> Vec2;
 }
 
-pub trait Controllable {
-    fn process_control(&mut self);
-}
-
 pub struct MovingEntity {
     pub x_axis: CoordinateMovement,
     pub y_axis: CoordinateMovement,
     rectangle: Mesh,
+    terminate: bool,
 }
 
 impl Drawable for MovingEntity {
@@ -34,7 +31,7 @@ impl Drawable for MovingEntity {
 
 impl Entity for MovingEntity {
     fn terminate(&self) -> bool {
-        false
+        self.terminate
     }
     fn position(&self) -> Vec2 {
         Vec2::new(self.x_axis.get_position(), self.y_axis.get_position())
@@ -53,59 +50,12 @@ impl MovingEntity {
                 Color::WHITE,
             )
             .unwrap(),
+            terminate: false,
         }
     }
     pub fn update(&mut self) {
         self.x_axis.update();
         self.y_axis.update();
-    }
-}
-
-pub struct ControllableMovingEntity {
-    pub moving_entity: MovingEntity,
-}
-
-impl ControllableMovingEntity {
-    pub fn new(ctx: &mut Context, x_axis: CoordinateMovement, y_axis: CoordinateMovement) -> Self {
-        ControllableMovingEntity {
-            moving_entity: MovingEntity::new(ctx, x_axis, y_axis),
-        }
-    }
-
-    pub fn apply_controllable_down(&mut self, keyinput: KeyInput) {
-        match keyinput.keycode {
-            Some(KeyCode::Up) => {
-                self.moving_entity.y_axis.set_velocity(-2.0);
-            }
-            Some(KeyCode::Down) => {
-                self.moving_entity.y_axis.set_velocity(2.0);
-            }
-            Some(KeyCode::Right) => {
-                self.moving_entity.x_axis.set_velocity(2.0);
-            }
-            Some(KeyCode::Left) => {
-                self.moving_entity.x_axis.set_velocity(-2.0);
-            }
-            _ => {}
-        }
-    }
-
-    pub fn apply_controllable_up(&mut self, keyinput: KeyInput) {
-        match keyinput.keycode {
-            Some(KeyCode::Up) => {
-                self.moving_entity.y_axis.set_velocity(0.0);
-            }
-            Some(KeyCode::Down) => {
-                self.moving_entity.y_axis.set_velocity(0.0);
-            }
-            Some(KeyCode::Right) => {
-                self.moving_entity.x_axis.set_velocity(0.0);
-            }
-            Some(KeyCode::Left) => {
-                self.moving_entity.x_axis.set_velocity(0.0);
-            }
-            _ => {}
-        }
     }
 }
 

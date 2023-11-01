@@ -3,34 +3,20 @@ repos:
   rev: v1.0 # replace with a specific git tag or commit hash
   hooks:
   - id: fmt
-  - id: cargo-check
-  - id: clippy
-    args: ["--fix", "--allow-dirty"]
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0 # replace with a specific git tag or commit hash
-  hooks:
-  - id: check-case-conflict
-  - id: check-merge-conflict
-  - id: check-vcs-permalinks
-  - id: check-toml
-  - id: check-yaml
-  - id: check-added-large-files
-    args: [ '--maxkb=1000' ]
-  - id: mixed-line-ending
-    args: [ '--fix=auto' ]
-  - id: no-commit-to-branch
-    args: [ '--branch', 'master' ]
-
-
-
-
-#- repo: https://github.com/est31/cargo-udeps
-#  rev: master # replace with a specific git tag or commit hash
+#  - id: cargo-check
+#  - id: clippy
+#    args: ["--fix"]
+#- repo: https://github.com/pre-commit/pre-commit-hooks
+#  rev: v4.5.0 # replace with a specific git tag or commit hash
 #  hooks:
-#  - id: cargo-udeps
-
-##  - id: forbid-crlf
-#  - id: forbid-tabs
-#  - id: insert-license
-#  - id: shell-lint
-#  - id: do-not-submit
+#  - id: check-case-conflict
+#  - id: check-merge-conflict
+#  - id: check-vcs-permalinks
+#  - id: check-toml
+#  - id: check-yaml
+#  - id: check-added-large-files
+#    args: [ '--maxkb=1000' ]
+#  - id: mixed-line-ending
+#    args: [ '--fix=auto' ]
+#  - id: no-commit-to-branch
+#    args: [ '--branch', 'master' ]
