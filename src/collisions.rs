@@ -38,22 +38,9 @@ fn test_collision_left_right_should_not_collide() {
 }
 
 #[test]
-fn test_collision_one_dimension_should_collide() {
-    assert!(collision_one_dimension(0.0, 5.0, 3.0, 10.0))
-}
-
-#[test]
 fn test_collision_one_dimension_should_collide_symmetrical() {
-    assert!(collision_one_dimension(3.0, 10.0, 0.0, 5.0))
-}
-
-#[test]
-fn test_is_collision_with_exact_overlap() {
-    let mut mock1 = MockDimension::new();
-    mock1.expect_dimension().returning(|| (0.0, 5.0, 0.0, 5.0));
-    let mut mock2 = MockDimension::new();
-    mock2.expect_dimension().returning(|| (0.0, 5.0, 0.0, 5.0));
-    assert!(is_collision(mock1, mock2))
+    assert!(collision_one_dimension(0.0, 5.0, 3.0, 10.0));
+    assert!(collision_one_dimension(3.0, 10.0, 0.0, 5.0));
 }
 
 #[test]
@@ -62,16 +49,8 @@ fn test_is_collision_with_overlap() {
     mock1.expect_dimension().returning(|| (0.0, 5.0, 0.0, 5.0));
     let mut mock2 = MockDimension::new();
     mock2.expect_dimension().returning(|| (2.0, 7.0, 2.0, 7.0));
-    assert!(is_collision(mock1, mock2))
-}
-
-#[test]
-fn test_is_collision_with_overlap_symmetrical() {
-    let mut mock1 = MockDimension::new();
-    mock1.expect_dimension().returning(|| (0.0, 5.0, 0.0, 5.0));
-    let mut mock2 = MockDimension::new();
-    mock2.expect_dimension().returning(|| (2.0, 7.0, 2.0, 7.0));
-    assert!(is_collision(mock2, mock1))
+    assert!(is_collision(mock1, mock2));
+    assert!(is_collision(mock2, mock1));
 }
 
 #[test]
@@ -80,7 +59,8 @@ fn test_is_collision_no_overlap() {
     mock1.expect_dimension().returning(|| (0.0, 5.0, 0.0, 5.0));
     let mut mock2 = MockDimension::new();
     mock2.expect_dimension().returning(|| (6.0, 7.0, 6.0, 7.0));
-    assert!(!is_collision(mock2, mock1))
+    assert!(!is_collision(mock1, mock2));
+    assert!(!is_collision(mock2, mock1));
 }
 
 #[test]
