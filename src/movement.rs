@@ -16,8 +16,11 @@ trait Movement: Velocity + Position {
     fn is_at_boundary(&self) -> bool;
 }
 
+pub trait Update {
+    fn update(&mut self);
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-// TODO: Add final option disappear
 pub enum BoundaryBehavior {
     Bounce,
     Wrap,
@@ -95,26 +98,6 @@ impl CoordinateMovement {
             is_alive: true,
         }
     }
-    pub fn update(&mut self) {
-        if !self.is_at_boundary() {
-            self.position += self.velocity;
-            return;
-        }
-        match self.get_boundary_behavior() {
-            BoundaryBehavior::Wrap => {
-                self.boundary_behavior_wrap();
-            }
-            BoundaryBehavior::Bounce => {
-                self.boundary_behavior_bounce();
-            }
-            BoundaryBehavior::Collide => {
-                self.boundary_behavior_collide();
-            }
-            BoundaryBehavior::Die => {
-                self.boundary_behavior_die();
-            }
-        }
-    }
 
     fn boundary_behavior_die(&mut self) {
         self.is_alive = false;
@@ -146,6 +129,29 @@ impl CoordinateMovement {
         let new_position_offset =
             (position_offset + self.get_velocity()).rem_euclid(self.get_max() - self.get_min());
         self.position = new_position_offset + self.get_min();
+    }
+}
+
+impl Update for CoordinateMovement {
+    fn update(&mut self) {
+        if !self.is_at_boundary() {
+            self.position += self.velocity;
+            return;
+        }
+        match self.get_boundary_behavior() {
+            BoundaryBehavior::Wrap => {
+                self.boundary_behavior_wrap();
+            }
+            BoundaryBehavior::Bounce => {
+                self.boundary_behavior_bounce();
+            }
+            BoundaryBehavior::Collide => {
+                self.boundary_behavior_collide();
+            }
+            BoundaryBehavior::Die => {
+                self.boundary_behavior_die();
+            }
+        }
     }
 }
 

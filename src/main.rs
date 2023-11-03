@@ -9,10 +9,9 @@ use ggez::{
     Context, GameResult,
 };
 use my_game::collisions::compute_collisions_target_projectile;
-
 use my_game::controls::Controllable;
 use my_game::entities::{Lifetime, MovingEntity};
-use my_game::movement::{BoundaryBehavior, CoordinateMovement};
+use my_game::movement::{BoundaryBehavior, CoordinateMovement, Update};
 use my_game::targets::add_targets;
 
 struct MainState {
@@ -49,12 +48,8 @@ impl event::EventHandler<ggez::GameError> for MainState {
         self.projectile_vec.retain(|entity| entity.is_alive());
         // Apply updates to entities:
         self.main_player.update();
-        for moving_entity in self.target_vec.iter_mut() {
-            moving_entity.update();
-        }
-        for moving_entity in self.projectile_vec.iter_mut() {
-            moving_entity.update();
-        }
+        self.target_vec.update();
+        self.projectile_vec.update();
         Ok(())
     }
 

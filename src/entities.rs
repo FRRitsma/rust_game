@@ -1,5 +1,5 @@
 use crate::movement;
-use crate::movement::Position;
+use crate::movement::{Position, Update};
 use ggez;
 use ggez::context::Has;
 use ggez::graphics::{self, Canvas, Color, DrawParam, Drawable, GraphicsContext, Mesh, Rect};
@@ -35,7 +35,7 @@ impl Drawable for MovingEntity {
 
 impl Lifetime for MovingEntity {
     fn is_alive(&self) -> bool {
-        // Both axis, and the object itself must still be alive:
+        // Both axes and the object itself must still be alive:
         self.x_axis.is_alive() && self.y_axis.is_alive() && self.is_alive
     }
     fn set_alive(&mut self, alive: bool) {
@@ -64,9 +64,20 @@ impl MovingEntity {
             is_alive: true,
         }
     }
-    pub fn update(&mut self) {
+}
+
+impl Update for MovingEntity {
+    fn update(&mut self) {
         self.x_axis.update();
         self.y_axis.update();
+    }
+}
+
+impl Update for Vec<MovingEntity> {
+    fn update(&mut self) {
+        for moving_entity in self.iter_mut() {
+            moving_entity.update();
+        }
     }
 }
 
