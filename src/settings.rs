@@ -1,1 +1,1 @@
-pub const PROJECTILE_SPEED : f32 = 5.0;
+pub const PROJECTILE_SPEED: f32 = 5.0;
