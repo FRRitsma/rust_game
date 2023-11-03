@@ -12,9 +12,11 @@ use my_game::collisions::compute_collisions_target_projectile;
 use my_game::controls::Controllable;
 use my_game::entities::{Lifetime, MovingEntity};
 use my_game::movement::{BoundaryBehavior, CoordinateMovement, Update};
+use my_game::settings;
+
 use my_game::targets::add_targets;
 
-struct MainState {
+pub struct MainState {
     main_player: MovingEntity,
     projectile_vec: Vec<MovingEntity>,
     target_vec: Vec<MovingEntity>,
@@ -26,7 +28,7 @@ impl MainState {
         let x_axis: CoordinateMovement =
             CoordinateMovement::new(0.0, 800.0, 400.0, 0.0, BoundaryBehavior::Collide);
         let y_axis: CoordinateMovement =
-            CoordinateMovement::new(0.0, 600.0, 200.0, 0.0, BoundaryBehavior::Collide);
+            CoordinateMovement::new(0.0, 600.0, 580.0, 0.0, BoundaryBehavior::Collide);
         let main_player = MovingEntity::new(ctx, x_axis, y_axis);
         // Define a target vector:
         let mut target_vec = Vec::new();
@@ -40,12 +42,16 @@ impl MainState {
 }
 
 impl event::EventHandler<ggez::GameError> for MainState {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult {
+    fn update(&mut self, ctx: &mut Context) -> GameResult {
         //Check collisions
         compute_collisions_target_projectile(&mut self.target_vec, &mut self.projectile_vec);
         // Keep only entities that are alive:
         self.target_vec.retain(|entity| entity.is_alive());
         self.projectile_vec.retain(|entity| entity.is_alive());
+        // Spawn new targets if existing targets are killed:
+        if self.target_vec.is_empty() {
+            add_targets(ctx, &mut self.target_vec);
+        }
         // Apply updates to entities:
         self.main_player.update();
         self.target_vec.update();
@@ -87,8 +93,19 @@ impl event::EventHandler<ggez::GameError> for MainState {
 }
 
 pub fn main() -> GameResult {
-    let cb = ggez::ContextBuilder::new("super_simple", "ggez");
+    let cb = ggez::ContextBuilder::new("super_simple", "ggez").window_mode(
+        ggez::conf::WindowMode::default().dimensions(settings::WINDOW_WITH, settings::WINDOW_WITH), // Set window size to 800x600
+    );
     let (mut ctx, event_loop) = cb.build()?;
     let state = MainState::new(&mut ctx)?;
-    event::run(ctx, event_loop, state)
+    event::run(ctx, event_loop, state);
 }
+
+// pub fn main() -> GameResult {
+// // Make a Context.
+// let (mut ctx, event_loop) = ggez::ContextBuilder::new("my_game", "Cool Game Author")
+//     .build()
+//     .expect("aieee, could not create ggez context!");
+// let menu_state = MenuState::new(&mut ctx);
+// event::run(ctx, event_loop, menu_state);
+// }

@@ -3,6 +3,7 @@ pub mod controls;
 pub mod entities;
 pub mod lifetime;
 pub mod movement;
-mod settings;
+pub mod settings;
 pub mod shooting;
+pub mod states;
 pub mod targets;

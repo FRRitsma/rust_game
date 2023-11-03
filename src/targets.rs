@@ -8,13 +8,10 @@ use crate::movement::{BoundaryBehavior, CoordinateMovement};
 use ggez::Context;
 
 pub fn add_targets(ctx: &mut Context, target_vec: &mut Vec<MovingEntity>) {
-    let mut x_axis: CoordinateMovement =
-        CoordinateMovement::new(50.0, 350.0, 0.0, 2.0, BoundaryBehavior::Bounce);
+    let mut x_axis: CoordinateMovement;
     let y_axis: CoordinateMovement =
-        CoordinateMovement::new(0.0, 600.0, 300.0, 0.25, BoundaryBehavior::Bounce);
+        CoordinateMovement::new(0.0, 600.0, 50.0, 0.25, BoundaryBehavior::Bounce);
     for i in 0..10 {
-        let target = MovingEntity::new(ctx, x_axis, y_axis);
-        target_vec.push(target);
         x_axis = CoordinateMovement::new(
             50.0 + 50.0 * i as f32,
             350.0 + 50.0 * i as f32,
@@ -22,5 +19,7 @@ pub fn add_targets(ctx: &mut Context, target_vec: &mut Vec<MovingEntity>) {
             2.0,
             BoundaryBehavior::Bounce,
         );
+        let target = MovingEntity::new(ctx, x_axis, y_axis);
+        target_vec.push(target);
     }
 }
