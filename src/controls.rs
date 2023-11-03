@@ -16,12 +16,6 @@ pub trait Controllable {
 impl Controllable for MovingEntity {
     fn apply_controllable_down(&mut self, keyinput: KeyInput) {
         match keyinput.keycode {
-            Some(KeyCode::Up) => {
-                self.y_axis.set_velocity(-2.0);
-            }
-            Some(KeyCode::Down) => {
-                self.y_axis.set_velocity(2.0);
-            }
             Some(KeyCode::Right) => {
                 self.x_axis.set_velocity(2.0);
             }
@@ -37,18 +31,13 @@ impl Controllable for MovingEntity {
         keyinput: KeyInput,
     ) -> Option<MovingEntity> {
         match keyinput.keycode {
-            Some(KeyCode::Up) => {
-                self.y_axis.set_velocity(0.0);
-            }
-            Some(KeyCode::Down) => {
-                self.y_axis.set_velocity(0.0);
-            }
             Some(KeyCode::Right) => {
                 self.x_axis.set_velocity(0.0);
             }
             Some(KeyCode::Left) => {
                 self.x_axis.set_velocity(0.0);
             }
+            // TODO: Should be press instead of lift
             // Implement space bar lift of:
             Some(KeyCode::Space) => return Some(self.spawn(ctx)),
             _ => {}

@@ -3,10 +3,10 @@ use crate::movement::Position;
 use ggez;
 use ggez::context::Has;
 use ggez::graphics::{self, Canvas, Color, DrawParam, Drawable, GraphicsContext, Mesh, Rect};
-use ggez::input::keyboard::{KeyCode, KeyInput};
+
 use ggez::{glam, Context};
 use glam::Vec2;
-use movement::{CoordinateMovement, Velocity};
+use movement::CoordinateMovement;
 
 pub trait Entity {
     fn position(&self) -> Vec2;
