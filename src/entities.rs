@@ -9,15 +9,19 @@ use glam::Vec2;
 use movement::{CoordinateMovement, Velocity};
 
 pub trait Entity {
-    fn terminate(&self) -> bool;
     fn position(&self) -> Vec2;
+}
+
+pub trait Lifetime {
+    fn is_alive(&self) -> bool;
+    fn set_alive(&mut self, alive: bool);
 }
 
 pub struct MovingEntity {
     pub x_axis: CoordinateMovement,
     pub y_axis: CoordinateMovement,
     rectangle: Mesh,
-    terminate: bool,
+    is_alive: bool,
 }
 
 impl Drawable for MovingEntity {
@@ -29,10 +33,17 @@ impl Drawable for MovingEntity {
     }
 }
 
-impl Entity for MovingEntity {
-    fn terminate(&self) -> bool {
-        self.terminate
+impl Lifetime for MovingEntity {
+    fn is_alive(&self) -> bool {
+        // Both axis, and the object itself must still be alive:
+        self.x_axis.is_alive() && self.y_axis.is_alive() && self.is_alive
     }
+    fn set_alive(&mut self, alive: bool) {
+        self.is_alive = alive;
+    }
+}
+
+impl Entity for MovingEntity {
     fn position(&self) -> Vec2 {
         Vec2::new(self.x_axis.get_position(), self.y_axis.get_position())
     }
@@ -50,7 +61,7 @@ impl MovingEntity {
                 Color::WHITE,
             )
             .unwrap(),
-            terminate: false,
+            is_alive: true,
         }
     }
     pub fn update(&mut self) {
