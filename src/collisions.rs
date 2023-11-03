@@ -17,17 +17,14 @@ impl<T: Dimension> Dimension for &T {
 }
 
 fn collision_left_right(left_min1: f32, right_min2: f32, right_max2: f32) -> bool {
-    // Must be used twice to check whether an object overlaps in one dimension
     left_min1 >= right_min2 && left_min1 <= right_max2
 }
 
 fn collision_one_dimension(min1: f32, max1: f32, min2: f32, max2: f32) -> bool {
-    // Returns true if two objects overlap in one dimension
     collision_left_right(min1, min2, max2) || collision_left_right(min2, min1, max1)
 }
 
 pub fn is_collision<T: Dimension>(object1: T, object2: T) -> bool {
-    // Returns true if two objets overlap in both dimensions
     let (xmin1, xmax1, ymin1, ymax1) = object1.dimension();
     let (xmin2, xmax2, ymin2, ymax2) = object2.dimension();
     collision_one_dimension(xmin1, xmax1, xmin2, xmax2)
