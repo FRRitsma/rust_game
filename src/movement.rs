@@ -1,20 +1,23 @@
-pub trait Coordinate {
+use crate::entities::Lifetime;
+
+pub trait Position {
     fn get_min(&self) -> f32;
     fn get_max(&self) -> f32;
-}
-
-pub trait Position: Coordinate {
     fn get_position(&self) -> f32;
 }
 
-pub trait Velocity: Position + Coordinate {
+pub trait Velocity {
     fn get_velocity(&self) -> f32;
     fn set_velocity(&mut self, velocity: f32);
 }
 
-trait Movement: Velocity + Position + Coordinate {
+trait Movement: Velocity + Position {
     fn get_boundary_behavior(&self) -> BoundaryBehavior;
     fn is_at_boundary(&self) -> bool;
+}
+
+pub trait Update {
+    fn update(&mut self);
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -22,37 +25,35 @@ pub enum BoundaryBehavior {
     Bounce,
     Wrap,
     Collide,
+    Die,
 }
 
 // Implement for structs:
+#[derive(Clone, Copy)]
 pub struct CoordinateMovement {
     min: f32,
     max: f32,
     position: f32,
     velocity: f32,
     boundary_behavior: BoundaryBehavior,
-}
-
-impl Coordinate for CoordinateMovement {
-    fn get_min(&self) -> f32 {
-        return self.min;
-    }
-
-    fn get_max(&self) -> f32 {
-        return self.max;
-    }
+    is_alive: bool,
 }
 
 impl Position for CoordinateMovement {
-    // TODO: Make private
+    fn get_min(&self) -> f32 {
+        self.min
+    }
+    fn get_max(&self) -> f32 {
+        self.max
+    }
     fn get_position(&self) -> f32 {
-        return self.position;
+        self.position
     }
 }
 
 impl Velocity for CoordinateMovement {
     fn get_velocity(&self) -> f32 {
-        return self.velocity;
+        self.velocity
     }
     fn set_velocity(&mut self, velocity: f32) {
         self.velocity = velocity;
@@ -61,12 +62,20 @@ impl Velocity for CoordinateMovement {
 
 impl Movement for CoordinateMovement {
     fn get_boundary_behavior(&self) -> BoundaryBehavior {
-        self.boundary_behavior.clone()
+        self.boundary_behavior
     }
-
     fn is_at_boundary(&self) -> bool {
         let next_position = self.position + self.velocity;
-        return next_position > self.get_max() || next_position < self.get_min();
+        next_position > self.get_max() || next_position < self.get_min()
+    }
+}
+
+impl Lifetime for CoordinateMovement {
+    fn is_alive(&self) -> bool {
+        self.is_alive
+    }
+    fn set_alive(&mut self, alive: bool) {
+        self.is_alive = alive;
     }
 }
 
@@ -86,37 +95,61 @@ impl CoordinateMovement {
             position,
             velocity,
             boundary_behavior,
+            is_alive: true,
         }
     }
-    pub fn update(&mut self) {
+
+    fn boundary_behavior_die(&mut self) {
+        self.is_alive = false;
+        self.set_velocity(0.0);
+    }
+
+    fn boundary_behavior_collide(&mut self) {
+        let overshoot = self.position + self.velocity;
+        if overshoot > self.get_max() {
+            self.position = self.get_max();
+        } else {
+            self.position = self.get_min();
+        }
+        self.velocity = 0.0;
+    }
+
+    fn boundary_behavior_bounce(&mut self) {
+        let overshoot = self.position + self.velocity;
+        if overshoot > self.get_max() {
+            self.position = 2.0 * self.get_max() - overshoot;
+        } else {
+            self.position = 2.0 * self.get_min() - overshoot;
+        }
+        self.velocity = -self.get_velocity();
+    }
+
+    fn boundary_behavior_wrap(&mut self) {
+        let position_offset = self.get_position() - self.get_min();
+        let new_position_offset =
+            (position_offset + self.get_velocity()).rem_euclid(self.get_max() - self.get_min());
+        self.position = new_position_offset + self.get_min();
+    }
+}
+
+impl Update for CoordinateMovement {
+    fn update(&mut self) {
         if !self.is_at_boundary() {
             self.position += self.velocity;
             return;
         }
         match self.get_boundary_behavior() {
             BoundaryBehavior::Wrap => {
-                let position_offset = self.get_position() - self.get_min();
-                let new_position_offset = (position_offset + self.get_velocity())
-                    .rem_euclid(self.get_max() - self.get_min());
-                self.position = new_position_offset + self.get_min();
+                self.boundary_behavior_wrap();
             }
             BoundaryBehavior::Bounce => {
-                let overshoot = self.position + self.velocity;
-                if overshoot > self.get_max() {
-                    self.position = 2.0 * self.get_max() - overshoot;
-                } else {
-                    self.position = 2.0 * self.get_min() - overshoot;
-                }
-                self.velocity = -self.get_velocity();
+                self.boundary_behavior_bounce();
             }
             BoundaryBehavior::Collide => {
-                let overshoot = self.position + self.velocity;
-                if overshoot > self.get_max() {
-                    self.position = self.get_max();
-                } else {
-                    self.position = self.get_min();
-                }
-                self.velocity = 0.0;
+                self.boundary_behavior_collide();
+            }
+            BoundaryBehavior::Die => {
+                self.boundary_behavior_die();
             }
         }
     }
@@ -200,148 +233,3 @@ fn test_bounces_at_positive_velocity() {
     movement_object.update();
     assert_eq!(movement_object.get_position(), 5.0);
 }
-
-//
-
-//
-//
-// pub enum BoundaryBehavior {
-//     Bounce,
-//     Wrap,
-//     Disappear,
-// }
-//
-// struct Boundaries{
-//     x_min: f64,
-//     x_max: f64,
-//     y_min: f64,
-//     y_max: f64,
-// }
-//
-// trait Movement: Position + Velocity {
-//
-//     fn set_x_position(&mut self, x: f64);
-//
-//     fn set_y_position(&mut self, x: f64);
-//
-//     fn set_x_velocity(&mut self, dx: f64);
-//
-//     fn set_y_velocity(&mut self, dy: f64);
-//
-//     fn get_boundary_behavior(&self) -> BoundaryBehavior;
-//
-//     fn move_x(&mut self){
-//         if self.is_at_x_boundary(){
-//             match self.get_boundary_behavior() {
-//                 BoundaryBehavior::Bounce => {
-//                     self.set_x_velocity(-self.x_vol());
-//                     let new_x = self.x_pos() + self.x_vol();
-//                     self.set_x_position(new_x);
-//                 },
-//                 BoundaryBehavior::Wrap => {
-//                     let new_x = (self.x_pos() + self.x_vol()) % 800.0;
-//                     self.set_x_position(new_x);
-//                 },
-//                 BoundaryBehavior::Disappear => {},
-//             }
-//         }
-//         else{
-//             let new_x = self.x_pos() + self.x_vol();
-//             self.set_x_position(new_x);
-//         }
-//     }
-//
-//     fn move_y(&mut self){
-//         if self.is_at_y_boundary(){
-//             self.set_y_velocity(-self.y_vol());
-//         }
-//         let new_y = self.y_pos() + self.y_vol();
-//         self.set_y_position(new_y);
-//     }
-//
-//         fn is_at_x_boundary(&self) -> bool{
-//         // TODO: Fix hardcodes!
-//         return self.x_pos() + self.x_vol() > 800.0 || self.x_pos() + self.x_vol() < 0.0
-//     }
-//
-//     fn is_at_y_boundary(&self) -> bool{
-//         // TODO: Fix hardcodes!
-//         return self.y_pos() + self.y_vol() > 600.0 || self.y_pos() + self.y_vol() < 0.0
-//     }
-//
-//     fn move_object(&mut self) {
-//         self.move_x();
-//         self.move_y();
-//     }
-// }
-//
-//
-// pub struct MovingObject {
-//     pub x_position: f64,
-//     pub y_position: f64,
-//     x_velocity: f64,
-//     y_velocity: f64,
-// }
-//
-// impl Position for MovingObject {
-//     fn x_pos(&self) -> f64 {
-//         self.x_position
-//     }
-//
-//     fn y_pos(&self) -> f64 {
-//         self.y_position
-//     }
-// }
-//
-// impl Velocity for MovingObject {
-//     fn x_vol(&self) -> f64 {
-//         self.x_velocity
-//     }
-//
-//     fn y_vol(&self) -> f64 {
-//         self.y_velocity
-//     }
-// }
-//
-// impl Movement for MovingObject {
-//
-//     fn set_x_position(&mut self, x: f64) {
-//         self.x_position = x;
-//     }
-//
-//     fn set_y_position(&mut self, y: f64) {
-//         self.y_position = y;
-//     }
-//
-//     fn set_x_velocity(&mut self, dx: f64) {
-//         self.x_velocity = dx;
-//     }
-//
-//     fn set_y_velocity(&mut self, dy: f64) {
-//         self.y_velocity = dy;
-//     }
-//
-//     fn get_boundary_behavior(&self) -> BoundaryBehavior {
-//         BoundaryBehavior::Wrap
-//     }
-//
-// }
-//
-// impl MovingObject{
-//     pub fn new(x_position: f64,
-//                y_position: f64,
-//                x_velocity: f64,
-//                y_velocity: f64,) -> Self{
-//         MovingObject {
-//             x_position,
-//             y_position,
-//             x_velocity,
-//             y_velocity,
-//         }
-//     }
-//
-//     pub fn update(&mut self){
-//         self.move_object()
-//     }
-// }
-//

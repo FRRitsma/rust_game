@@ -1,9 +1,8 @@
-// #[cfg(test)]
-// pub mod movement;
-// pub mod entities;
-// #[cfg(test)]
-// pub mod testing {
-//     pub use super::entities::MovementObject;
-// }
+pub mod collisions;
+pub mod controls;
 pub mod entities;
+pub mod lifetime;
 pub mod movement;
+mod settings;
+pub mod shooting;
+pub mod targets;
