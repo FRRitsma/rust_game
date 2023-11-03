@@ -26,6 +26,7 @@ pub enum BoundaryBehavior {
 }
 
 // Implement for structs:
+#[derive(Clone, Copy)]
 pub struct CoordinateMovement {
     min: f32,
     max: f32,
@@ -101,34 +102,50 @@ impl CoordinateMovement {
         }
         match self.get_boundary_behavior() {
             BoundaryBehavior::Wrap => {
-                let position_offset = self.get_position() - self.get_min();
-                let new_position_offset = (position_offset + self.get_velocity())
-                    .rem_euclid(self.get_max() - self.get_min());
-                self.position = new_position_offset + self.get_min();
+                self.boundary_behavior_wrap();
             }
             BoundaryBehavior::Bounce => {
-                let overshoot = self.position + self.velocity;
-                if overshoot > self.get_max() {
-                    self.position = 2.0 * self.get_max() - overshoot;
-                } else {
-                    self.position = 2.0 * self.get_min() - overshoot;
-                }
-                self.velocity = -self.get_velocity();
+                self.boundary_behavior_bounce();
             }
             BoundaryBehavior::Collide => {
-                let overshoot = self.position + self.velocity;
-                if overshoot > self.get_max() {
-                    self.position = self.get_max();
-                } else {
-                    self.position = self.get_min();
-                }
-                self.velocity = 0.0;
+                self.boundary_behavior_collide();
             }
             BoundaryBehavior::Die => {
-                self.is_alive = false;
-                self.set_velocity(0.0);
+                self.boundary_behavior_die();
             }
         }
+    }
+
+    fn boundary_behavior_die(&mut self) {
+        self.is_alive = false;
+        self.set_velocity(0.0);
+    }
+
+    fn boundary_behavior_collide(&mut self) {
+        let overshoot = self.position + self.velocity;
+        if overshoot > self.get_max() {
+            self.position = self.get_max();
+        } else {
+            self.position = self.get_min();
+        }
+        self.velocity = 0.0;
+    }
+
+    fn boundary_behavior_bounce(&mut self) {
+        let overshoot = self.position + self.velocity;
+        if overshoot > self.get_max() {
+            self.position = 2.0 * self.get_max() - overshoot;
+        } else {
+            self.position = 2.0 * self.get_min() - overshoot;
+        }
+        self.velocity = -self.get_velocity();
+    }
+
+    fn boundary_behavior_wrap(&mut self) {
+        let position_offset = self.get_position() - self.get_min();
+        let new_position_offset =
+            (position_offset + self.get_velocity()).rem_euclid(self.get_max() - self.get_min());
+        self.position = new_position_offset + self.get_min();
     }
 }
 

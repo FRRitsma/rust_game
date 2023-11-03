@@ -13,6 +13,7 @@ use my_game::collisions::compute_collisions_target_projectile;
 use my_game::controls::Controllable;
 use my_game::entities::{Lifetime, MovingEntity};
 use my_game::movement::{BoundaryBehavior, CoordinateMovement};
+use my_game::targets::add_targets;
 
 struct MainState {
     main_player: MovingEntity,
@@ -28,14 +29,9 @@ impl MainState {
         let y_axis: CoordinateMovement =
             CoordinateMovement::new(0.0, 600.0, 200.0, 0.0, BoundaryBehavior::Collide);
         let main_player = MovingEntity::new(ctx, x_axis, y_axis);
-        // Define a target:
-        let x_axis: CoordinateMovement =
-            CoordinateMovement::new(0.0, 800.0, 400.0, 0.0, BoundaryBehavior::Collide);
-        let y_axis: CoordinateMovement =
-            CoordinateMovement::new(0.0, 600.0, 300.0, 0.0, BoundaryBehavior::Collide);
+        // Define a target vector:
         let mut target_vec = Vec::new();
-        let target = MovingEntity::new(ctx, x_axis, y_axis);
-        target_vec.push(target);
+        add_targets(ctx, &mut target_vec);
         Ok(MainState {
             main_player,
             projectile_vec: Vec::new(),
