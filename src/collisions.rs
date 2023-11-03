@@ -40,7 +40,9 @@ impl Dimension for MovingEntity {
     }
 }
 
-// This is a function that computes collisions between two vectors, one target and one projectile. It applies the set_alive = False method on the collided objects. The function is implemented using the traits Dimension and Lifetime
+// This is a function that computes collisions between two vectors, one target and one projectile.
+// It applies the set_alive = False method on the collided objects.
+// The function is implemented using the traits Dimension and Lifetime
 pub fn compute_collisions_target_projectile<T: Dimension + Lifetime>(
     targets: &mut Vec<T>,
     projectiles: &mut Vec<T>,
