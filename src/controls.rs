@@ -1,5 +1,6 @@
 use crate::entities::MovingEntity;
 use crate::movement::Velocity;
+use crate::settings::PLAYER_SPEED;
 use crate::shooting::Shoot;
 use ggez::input::keyboard::{KeyCode, KeyInput};
 use ggez::Context;
@@ -17,10 +18,10 @@ impl Controllable for MovingEntity {
     fn apply_controllable_down(&mut self, keyinput: KeyInput) {
         match keyinput.keycode {
             Some(KeyCode::Right) => {
-                self.x_axis.set_velocity(2.0);
+                self.x_axis.set_velocity(PLAYER_SPEED);
             }
             Some(KeyCode::Left) => {
-                self.x_axis.set_velocity(-2.0);
+                self.x_axis.set_velocity(-PLAYER_SPEED);
             }
             _ => {}
         }
