@@ -1,6 +1,6 @@
 #![allow(clippy::unnecessary_wraps)]
 
-use ggez::graphics::DrawParam;
+use ggez::graphics::{DrawParam, Image};
 use ggez::{
     event,
     glam::*,
@@ -83,7 +83,8 @@ impl event::EventHandler<ggez::GameError> for MainState {
         Ok(())
     }
     fn key_up_event(&mut self, _ctx: &mut Context, keyinput: KeyInput) -> GameResult {
-        // If space bar is lifted, spawn a new entity and attach to entity_vec. If none is returned, add nothing to entity_vec.
+        // If space bar is lifted, spawn a new entity and attach to entity_vec.
+        // If none is returned, add nothing to entity_vec.
         let entity = self.main_player.apply_controllable_up(_ctx, keyinput);
         if let Some(entity) = entity {
             self.projectile_vec.push(entity);
@@ -94,9 +95,15 @@ impl event::EventHandler<ggez::GameError> for MainState {
 
 pub fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("super_simple", "ggez").window_mode(
-        ggez::conf::WindowMode::default().dimensions(settings::WINDOW_WITH, settings::WINDOW_WITH), // Set window size to 800x600
+        ggez::conf::WindowMode::default()
+            .dimensions(settings::WINDOW_WITH, settings::WINDOW_HEIGHT),
     );
+
     let (mut ctx, event_loop) = cb.build()?;
+    let path = "C:/Users/frrit/OneDrive/Desktop/Game/my_game/resources".as_ref();
+    ctx.fs.mount(path, true);
+    let _image = Image::from_path(&mut ctx, "/alien.png").expect("Failed to load image");
+
     let state = MainState::new(&mut ctx)?;
     event::run(ctx, event_loop, state);
 }

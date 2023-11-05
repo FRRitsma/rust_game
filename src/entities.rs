@@ -2,7 +2,7 @@ use crate::movement;
 use crate::movement::{Position, Update};
 use ggez;
 use ggez::context::Has;
-use ggez::graphics::{self, Canvas, Color, DrawParam, Drawable, GraphicsContext, Mesh, Rect};
+use ggez::graphics::{Canvas, DrawParam, Drawable, GraphicsContext, Image, Rect};
 
 use ggez::{glam, Context};
 use glam::Vec2;
@@ -20,13 +20,13 @@ pub trait Lifetime {
 pub struct MovingEntity {
     pub x_axis: CoordinateMovement,
     pub y_axis: CoordinateMovement,
-    rectangle: Mesh,
+    sprite: Image,
     is_alive: bool,
 }
 
 impl Drawable for MovingEntity {
     fn draw(&self, canvas: &mut Canvas, _: impl Into<DrawParam>) {
-        canvas.draw(&self.rectangle, self.position());
+        canvas.draw(&self.sprite, self.position());
     }
     fn dimensions(&self, _gfx: &impl Has<GraphicsContext>) -> Option<Rect> {
         Some(Rect::new(10.0, 10.0, 10.0, 10.0))
@@ -54,13 +54,7 @@ impl MovingEntity {
         MovingEntity {
             x_axis,
             y_axis,
-            rectangle: Mesh::new_rectangle(
-                ctx,
-                graphics::DrawMode::fill(),
-                Rect::new(10.0, 10.0, 10.0, 10.0),
-                Color::WHITE,
-            )
-            .unwrap(),
+            sprite: Image::from_path(ctx, "/alien.png").unwrap(),
             is_alive: true,
         }
     }
@@ -79,9 +73,4 @@ impl Update for Vec<MovingEntity> {
             moving_entity.update();
         }
     }
-}
-
-#[test]
-fn test_moving_object_happy_flow() {
-    // let _ = MovingObject::new();
 }
