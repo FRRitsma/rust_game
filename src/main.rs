@@ -1,6 +1,6 @@
 #![allow(clippy::unnecessary_wraps)]
 
-use ggez::graphics::{DrawParam, Image};
+use ggez::graphics::DrawParam;
 use ggez::{
     event,
     glam::*,
@@ -13,6 +13,7 @@ use my_game::controls::Controllable;
 use my_game::entities::{Lifetime, MovingEntity};
 use my_game::movement::{BoundaryBehavior, CoordinateMovement, Update};
 use my_game::settings;
+use my_game::settings::SPRITE_PATH;
 
 use my_game::targets::add_targets;
 
@@ -98,21 +99,8 @@ pub fn main() -> GameResult {
         ggez::conf::WindowMode::default()
             .dimensions(settings::WINDOW_WITH, settings::WINDOW_HEIGHT),
     );
-
     let (mut ctx, event_loop) = cb.build()?;
-    let path = "C:/Users/frrit/OneDrive/Desktop/Game/my_game/resources".as_ref();
-    ctx.fs.mount(path, true);
-    let _image = Image::from_path(&mut ctx, "/alien.png").expect("Failed to load image");
-
+    ctx.fs.mount(SPRITE_PATH.as_ref(), true);
     let state = MainState::new(&mut ctx)?;
     event::run(ctx, event_loop, state);
 }
-
-// pub fn main() -> GameResult {
-// // Make a Context.
-// let (mut ctx, event_loop) = ggez::ContextBuilder::new("my_game", "Cool Game Author")
-//     .build()
-//     .expect("aieee, could not create ggez context!");
-// let menu_state = MenuState::new(&mut ctx);
-// event::run(ctx, event_loop, menu_state);
-// }
