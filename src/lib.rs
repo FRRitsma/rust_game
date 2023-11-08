@@ -1,5 +1,6 @@
 pub mod collisions;
 pub mod controls;
+pub mod drawing;
 pub mod entities;
 pub mod lifetime;
 pub mod movement;

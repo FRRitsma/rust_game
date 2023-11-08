@@ -1,8 +1,8 @@
 use crate::movement;
 use crate::movement::{Position, Update};
 use ggez;
-use ggez::context::Has;
-use ggez::graphics::{Canvas, DrawParam, Drawable, GraphicsContext, Image, Rect};
+
+use ggez::graphics::Image;
 
 use ggez::{glam, Context};
 use glam::Vec2;
@@ -22,15 +22,6 @@ pub struct MovingEntity {
     pub y_axis: CoordinateMovement,
     sprite: Image,
     is_alive: bool,
-}
-
-impl Drawable for MovingEntity {
-    fn draw(&self, canvas: &mut Canvas, _: impl Into<DrawParam>) {
-        canvas.draw(&self.sprite, self.position());
-    }
-    fn dimensions(&self, _gfx: &impl Has<GraphicsContext>) -> Option<Rect> {
-        Some(Rect::new(10.0, 10.0, 10.0, 10.0))
-    }
 }
 
 impl Lifetime for MovingEntity {
@@ -54,9 +45,13 @@ impl MovingEntity {
         MovingEntity {
             x_axis,
             y_axis,
-            sprite: Image::from_path(ctx, "/alien.png").unwrap(),
+            sprite: Image::from_path(ctx, "/test.png").unwrap(),
             is_alive: true,
         }
+    }
+
+    pub fn get_sprite(&self) -> &Image {
+        &self.sprite
     }
 }
 
