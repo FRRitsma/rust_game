@@ -1,3 +1,4 @@
+use crate::menus::menu_settings;
 use ggez::graphics::DrawParam;
 use ggez::input::keyboard::{KeyCode, KeyInput};
 use ggez::{event, glam, graphics, Context, GameResult};
@@ -22,13 +23,11 @@ impl event::EventHandler for MenuState {
             Some(KeyCode::Up) => {
                 if self.selected > 0 {
                     self.selected -= 1;
-                    println!("{}", self.selected);
                 }
             }
             Some(KeyCode::Down) => {
                 if self.selected < self.options.len() - 1 {
                     self.selected += 1;
-                    println!("{}", self.selected);
                 }
             }
             Some(KeyCode::Return) => {
@@ -51,14 +50,17 @@ impl event::EventHandler for MenuState {
             } else {
                 unselected_color
             };
+
             let text = graphics::Text::new(graphics::TextFragment {
+                font: Some("LiberationMono-Regular".into()),
                 text: option.clone(),
                 color: Some(color),
+                scale: Some(graphics::PxScale::from(menu_settings::FONT_SIZE)),
                 ..Default::default()
             });
             let dest_point = glam::Vec2::new(0.0, y);
             canvas.draw(&text, DrawParam::default().dest(dest_point));
-            y += 30.0;
+            y += menu_settings::FONT_SIZE;
         }
 
         canvas.finish(ctx)?;
@@ -71,21 +73,11 @@ impl MenuState {
         // Initialize your menu state here.
         MenuState {
             options: vec![
-                "Option 1".to_string(),
-                "Option 2".to_string(),
-                // Add more options here...
+                "Start Game".to_string(),
+                "Settings".to_string(),
+                "Quit".to_string(),
             ],
             selected: 0,
         }
     }
 }
-
-// pub fn main() -> GameResult {
-//     let cb = ggez::ContextBuilder::new("super_simple", "ggez")
-//         .window_mode(
-//         ggez::conf::WindowMode::default().dimensions(settings::WINDOW_WITH, settings::WINDOW_HEIGHT), // Set window size to 800x600
-//     );
-//     let (mut ctx, event_loop) = cb.build()?;
-//     let state = MainState::new(&mut ctx)?;
-//     event::run(ctx, event_loop, state);
-// }

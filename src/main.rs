@@ -11,20 +11,20 @@ use ggez::{
 use my_game::collisions::compute_collisions_target_projectile;
 use my_game::controls::Controllable;
 use my_game::entities::{Lifetime, MovingEntity};
+use my_game::menus::opening_menu::MenuState;
 use my_game::movement::{BoundaryBehavior, CoordinateMovement, Update};
 use my_game::settings;
 use my_game::settings::SPRITE_PATH;
-
 use my_game::targets::add_targets;
 
-pub struct MainState {
+pub struct GameState {
     main_player: MovingEntity,
     projectile_vec: Vec<MovingEntity>,
     target_vec: Vec<MovingEntity>,
 }
 
-impl MainState {
-    fn new(ctx: &mut Context) -> GameResult<MainState> {
+impl GameState {
+    fn new(ctx: &mut Context) -> GameResult<GameState> {
         // Define the main player:
         let x_axis: CoordinateMovement =
             CoordinateMovement::new(0.0, 800.0, 400.0, 0.0, BoundaryBehavior::Collide);
@@ -34,7 +34,7 @@ impl MainState {
         // Define a target vector:
         let mut target_vec = Vec::new();
         add_targets(ctx, &mut target_vec);
-        Ok(MainState {
+        Ok(GameState {
             main_player,
             projectile_vec: Vec::new(),
             target_vec,
@@ -42,7 +42,7 @@ impl MainState {
     }
 }
 
-impl event::EventHandler<ggez::GameError> for MainState {
+impl event::EventHandler<ggez::GameError> for GameState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
         //Check collisions
         compute_collisions_target_projectile(&mut self.target_vec, &mut self.projectile_vec);
@@ -94,6 +94,17 @@ impl event::EventHandler<ggez::GameError> for MainState {
     }
 }
 
+// pub fn main() -> GameResult {
+//     let cb = ggez::ContextBuilder::new("super_simple", "ggez").window_mode(
+//         ggez::conf::WindowMode::default()
+//             .dimensions(settings::WINDOW_WITH, settings::WINDOW_HEIGHT),
+//     );
+//     let (mut ctx, event_loop) = cb.build()?;
+//     ctx.fs.mount(SPRITE_PATH.as_ref(), true);
+//     let state = MainState::new(&mut ctx)?;
+//     event::run(ctx, event_loop, state);
+// }
+
 pub fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("super_simple", "ggez").window_mode(
         ggez::conf::WindowMode::default()
@@ -101,6 +112,6 @@ pub fn main() -> GameResult {
     );
     let (mut ctx, event_loop) = cb.build()?;
     ctx.fs.mount(SPRITE_PATH.as_ref(), true);
-    let state = MainState::new(&mut ctx)?;
+    let state = MenuState::new(&mut ctx);
     event::run(ctx, event_loop, state);
 }
