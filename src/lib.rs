@@ -1,7 +1,9 @@
+pub mod all_states;
 pub mod collisions;
 pub mod controls;
 pub mod drawing;
 pub mod entities;
+pub mod game_state;
 pub mod lifetime;
 pub mod menus;
 pub mod movement;

@@ -1,3 +1,4 @@
+use crate::all_states::ActiveState;
 use crate::menus::menu_settings;
 use ggez::graphics::DrawParam;
 use ggez::input::keyboard::{KeyCode, KeyInput};
@@ -6,6 +7,7 @@ use ggez::{event, glam, graphics, Context, GameResult};
 pub struct MenuState {
     options: Vec<String>,
     selected: usize,
+    pub active_state: ActiveState,
 }
 
 impl event::EventHandler for MenuState {
@@ -13,32 +15,6 @@ impl event::EventHandler for MenuState {
         // Put your game logic here
         Ok(())
     }
-    fn key_down_event(
-        &mut self,
-        _ctx: &mut Context,
-        keyinput: KeyInput,
-        _repeat: bool,
-    ) -> GameResult {
-        match keyinput.keycode {
-            Some(KeyCode::Up) => {
-                if self.selected > 0 {
-                    self.selected -= 1;
-                }
-            }
-            Some(KeyCode::Down) => {
-                if self.selected < self.options.len() - 1 {
-                    self.selected += 1;
-                }
-            }
-            Some(KeyCode::Return) => {
-                // Handle option selection
-            }
-            _ => {}
-        }
-        Ok(())
-    }
-    // Other methods...
-
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let selected_color = graphics::Color::new(1.0, 0.0, 0.0, 1.0); // Red color for selected
         let unselected_color = graphics::Color::new(1.0, 1.0, 1.0, 1.0); // White color for unselected
@@ -66,6 +42,35 @@ impl event::EventHandler for MenuState {
         canvas.finish(ctx)?;
         Ok(())
     }
+    // Other methods...
+
+    fn key_down_event(
+        &mut self,
+        _ctx: &mut Context,
+        keyinput: KeyInput,
+        _repeat: bool,
+    ) -> GameResult {
+        match keyinput.keycode {
+            Some(KeyCode::Up) => {
+                if self.selected > 0 {
+                    self.selected -= 1;
+                }
+            }
+            Some(KeyCode::Down) => {
+                if self.selected < self.options.len() - 1 {
+                    self.selected += 1;
+                }
+            }
+            Some(KeyCode::Return) => {
+                // Handle option selection
+                if self.selected == 0 {
+                    self.active_state = ActiveState::Game;
+                }
+            }
+            _ => {}
+        }
+        Ok(())
+    }
 }
 
 impl MenuState {
@@ -78,6 +83,7 @@ impl MenuState {
                 "Quit".to_string(),
             ],
             selected: 0,
+            active_state: ActiveState::Menu,
         }
     }
 }
