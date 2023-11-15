@@ -1,12 +1,4 @@
 pub mod all_states;
-pub mod collisions;
-pub mod controls;
-pub mod drawing;
-pub mod entities;
-pub mod game_state;
-pub mod lifetime;
+pub mod gameplay;
 pub mod menus;
-pub mod movement;
 pub mod settings;
-pub mod shooting;
-pub mod targets;

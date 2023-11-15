@@ -1,8 +1,10 @@
-use crate::game_state::GameState;
+// Manages all the states of the game, and the transitions between them.
+
+use crate::gameplay::game_state::GameState;
 use crate::menus::opening_menu::MenuState;
 use ggez::event::EventHandler;
 use ggez::input::keyboard::KeyInput;
-use ggez::{event, Context, GameError};
+use ggez::{Context, GameError};
 
 // Derive clone for Active State and partial eq:
 #[derive(Clone, PartialEq)]
@@ -27,7 +29,7 @@ impl AllStates {
     }
 }
 
-impl event::EventHandler for AllStates {
+impl EventHandler for AllStates {
     fn update(&mut self, _ctx: &mut Context) -> Result<(), GameError> {
         match self.active_state {
             ActiveState::Menu => {

@@ -1,6 +1,6 @@
-use crate::entities::MovingEntity;
-use crate::movement::{BoundaryBehavior, CoordinateMovement, Position};
-use crate::settings::PROJECTILE_SPEED;
+use crate::gameplay::entities::MovingEntity;
+use crate::gameplay::gameplay_settings::PROJECTILE_SPEED;
+use crate::gameplay::movement::{BoundaryBehavior, CoordinateMovement, Position};
 use ggez::Context;
 
 pub trait Shoot {

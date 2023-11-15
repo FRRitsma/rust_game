@@ -1,8 +1,8 @@
 // TODO: Write implemenation for collisions
 // Grid to prevent all vs. all comparison
 // Only check moving against moving and moving against static, not static vs. static
-use crate::entities::{Lifetime, MovingEntity};
-use crate::movement::Position;
+use crate::gameplay::entities::{Lifetime, MovingEntity};
+use crate::gameplay::movement::Position;
 use mockall::automock;
 
 #[automock]

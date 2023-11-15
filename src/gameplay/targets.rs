@@ -3,8 +3,8 @@
 // This function adds multiple targets to the target vector. It is used in the main.rs file. It places moving entities on the same y-axis, spaced across the x-axis.
 // The function is implemented using the traits Dimension and Lifetime.
 
-use crate::entities::MovingEntity;
-use crate::movement::{BoundaryBehavior, CoordinateMovement};
+use crate::gameplay::entities::MovingEntity;
+use crate::gameplay::movement::{BoundaryBehavior, CoordinateMovement};
 use ggez::Context;
 
 pub fn add_targets(ctx: &mut Context, target_vec: &mut Vec<MovingEntity>) {

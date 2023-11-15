@@ -1,4 +1,4 @@
-use crate::entities::{Entity, MovingEntity};
+use crate::gameplay::entities::{Entity, MovingEntity};
 use ggez::context::Has;
 use ggez::graphics::{Canvas, DrawParam, Drawable, GraphicsContext, Rect};
 

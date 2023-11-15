@@ -1,7 +1,7 @@
-use crate::entities::MovingEntity;
-use crate::movement::Velocity;
-use crate::settings::PLAYER_SPEED;
-use crate::shooting::Shoot;
+use crate::gameplay::entities::MovingEntity;
+use crate::gameplay::gameplay_settings::PLAYER_SPEED;
+use crate::gameplay::movement::Velocity;
+use crate::gameplay::shooting::Shoot;
 use ggez::input::keyboard::{KeyCode, KeyInput};
 use ggez::Context;
 
@@ -38,7 +38,6 @@ impl Controllable for MovingEntity {
             Some(KeyCode::Left) => {
                 self.x_axis.set_velocity(0.0);
             }
-            // TODO: Should be press instead of lift
             // Implement space bar lift of:
             Some(KeyCode::Space) => return Some(self.spawn(ctx)),
             _ => {}

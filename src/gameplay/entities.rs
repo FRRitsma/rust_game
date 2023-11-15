@@ -1,12 +1,11 @@
-use crate::movement;
-use crate::movement::{Position, Update};
+use crate::gameplay::movement::{Position, Update};
 use ggez;
 
 use ggez::graphics::Image;
 
+use crate::gameplay::movement::CoordinateMovement;
 use ggez::{glam, Context};
 use glam::Vec2;
-use movement::CoordinateMovement;
 
 pub trait Entity {
     fn position(&self) -> Vec2;
