@@ -1,7 +1,7 @@
 use crate::gameplay::collisions::compute_collisions_target_projectile;
 use crate::gameplay::controls::Controllable;
 use crate::gameplay::enemy_wave::EnemyWave;
-use crate::gameplay::entities::{Lifetime, MovingEntity};
+use crate::gameplay::entities::{EntityType, Lifetime, MovingEntity};
 use crate::gameplay::movement::{BoundaryBehavior, CoordinateMovement, Update};
 
 use ggez::glam::bool;
@@ -22,7 +22,8 @@ impl GameState {
             CoordinateMovement::new(0.0, 800.0, 400.0, 0.0, BoundaryBehavior::Collide);
         let y_axis: CoordinateMovement =
             CoordinateMovement::new(0.0, 600.0, 580.0, 0.0, BoundaryBehavior::Collide);
-        let main_player = MovingEntity::new(ctx, x_axis, y_axis);
+        let mut main_player = MovingEntity::new(x_axis, y_axis);
+        main_player.set_entity_type(EntityType::Player, ctx);
         // Define a target vector:
         Ok(GameState {
             main_player,

@@ -7,7 +7,7 @@ use ggez::input::keyboard::KeyInput;
 use ggez::{Context, GameError};
 
 // Derive clone for Active State and partial eq:
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum ActiveState {
     Menu,
     Game,
@@ -20,9 +20,9 @@ pub struct AllStates {
 }
 
 impl AllStates {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new() -> Self {
         Self {
-            menu_state: Some(MenuState::new(ctx)),
+            menu_state: None,
             game_state: None,
             active_state: ActiveState::Menu,
         }
@@ -33,22 +33,17 @@ impl EventHandler for AllStates {
     fn update(&mut self, _ctx: &mut Context) -> Result<(), GameError> {
         match self.active_state {
             ActiveState::Menu => {
-                if let Some(menu_state) = &mut self.menu_state {
-                    menu_state.update(_ctx)?;
-                    if menu_state.active_state == ActiveState::Game {
-                        self.active_state = ActiveState::Game;
-                        self.menu_state = None;
-                        self.game_state = Some(GameState::new(_ctx).unwrap());
-                    }
-                }
+                let menu_state_value: &mut MenuState =
+                    self.menu_state.get_or_insert(MenuState::new());
+                menu_state_value.update(_ctx)?;
+                self.active_state = menu_state_value.next_state().clone();
             }
             ActiveState::Game => {
-                if let Some(game_state) = &mut self.game_state {
-                    game_state.update(_ctx)?;
-                }
+                let game_state_value: &mut GameState =
+                    self.game_state.get_or_insert(GameState::new(_ctx).unwrap());
+                game_state_value.update(_ctx)?;
             }
         }
-
         Ok(())
     }
 

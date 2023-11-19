@@ -1,4 +1,4 @@
-use crate::gameplay::entities::MovingEntity;
+use crate::gameplay::entities::{EntityType, MovingEntity};
 use crate::gameplay::gameplay_settings::PROJECTILE_SPEED;
 use crate::gameplay::movement::{BoundaryBehavior, CoordinateMovement, Position};
 use ggez::Context;
@@ -23,6 +23,8 @@ impl Shoot for MovingEntity {
             PROJECTILE_SPEED,
             BoundaryBehavior::Die,
         );
-        MovingEntity::new(ctx, x_axis, y_axis)
+        let mut projectile = MovingEntity::new(x_axis, y_axis);
+        projectile.set_entity_type(EntityType::Projectile, ctx);
+        projectile
     }
 }

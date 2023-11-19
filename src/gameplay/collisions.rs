@@ -36,7 +36,12 @@ impl Dimension for MovingEntity {
         // TODO: Fix hardcoded dimensions
         let x = self.x_axis.get_position();
         let y = self.y_axis.get_position();
-        (x - 10.0, x + 10.0, y - 10.0, y + 10.0)
+        (
+            x,
+            x + self.get_sprite_width(),
+            y,
+            y + self.get_sprite_height(),
+        )
     }
 }
 

@@ -3,9 +3,20 @@ use ggez;
 
 use ggez::graphics::Image;
 
+use crate::gameplay::gameplay_settings::{
+    ENEMY_SCALE_HEIGHT, ENEMY_SCALE_WIDTH, ENEMY_SPRITE, MAIN_PLAYER_SCALE_HEIGHT,
+    MAIN_PLAYER_SCALE_WIDTH, MAIN_PLAYER_SPRITE, PROJECTILE_SCALE_HEIGHT, PROJECTILE_SCALE_WIDTH,
+    PROJECTILE_SPRITE,
+};
 use crate::gameplay::movement::CoordinateMovement;
 use ggez::{glam, Context};
 use glam::Vec2;
+
+pub enum EntityType {
+    Player,
+    Enemy,
+    Projectile,
+}
 
 pub trait Entity {
     fn position(&self) -> Vec2;
@@ -19,7 +30,9 @@ pub trait Lifetime {
 pub struct MovingEntity {
     pub x_axis: CoordinateMovement,
     pub y_axis: CoordinateMovement,
-    sprite: Image,
+    sprite: Option<Image>,
+    sprite_width: Option<f32>,
+    sprite_height: Option<f32>,
     is_alive: bool,
 }
 
@@ -40,17 +53,48 @@ impl Entity for MovingEntity {
 }
 
 impl MovingEntity {
-    pub fn new(ctx: &mut Context, x_axis: CoordinateMovement, y_axis: CoordinateMovement) -> Self {
+    pub fn new(x_axis: CoordinateMovement, y_axis: CoordinateMovement) -> Self {
         MovingEntity {
             x_axis,
             y_axis,
-            sprite: Image::from_path(ctx, "/test.png").unwrap(),
+            sprite: None,
+            sprite_width: None,
+            sprite_height: None,
             is_alive: true,
         }
     }
-
     pub fn get_sprite(&self) -> &Image {
-        &self.sprite
+        self.sprite.as_ref().unwrap()
+    }
+
+    pub fn get_sprite_width(&self) -> f32 {
+        self.sprite_width.unwrap()
+    }
+    pub fn get_sprite_height(&self) -> f32 {
+        self.sprite_height.unwrap()
+    }
+    pub fn set_entity_type(&mut self, entity_type: EntityType, ctx: &mut Context) {
+        match entity_type {
+            EntityType::Player => self.set_player(ctx),
+            EntityType::Enemy => self.set_enemy(ctx),
+            EntityType::Projectile => self.set_projectile(ctx),
+        }
+    }
+
+    fn set_player(&mut self, ctx: &mut Context) {
+        self.sprite = Some(Image::from_path(ctx, MAIN_PLAYER_SPRITE).unwrap());
+        self.sprite_width = Some(MAIN_PLAYER_SCALE_WIDTH);
+        self.sprite_height = Some(MAIN_PLAYER_SCALE_HEIGHT);
+    }
+    fn set_enemy(&mut self, ctx: &mut Context) {
+        self.sprite = Some(Image::from_path(ctx, ENEMY_SPRITE).unwrap());
+        self.sprite_width = Some(ENEMY_SCALE_WIDTH);
+        self.sprite_height = Some(ENEMY_SCALE_HEIGHT);
+    }
+    fn set_projectile(&mut self, ctx: &mut Context) {
+        self.sprite = Some(Image::from_path(ctx, PROJECTILE_SPRITE).unwrap());
+        self.sprite_width = Some(PROJECTILE_SCALE_WIDTH);
+        self.sprite_height = Some(PROJECTILE_SCALE_HEIGHT);
     }
 }
 

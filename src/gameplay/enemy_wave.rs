@@ -1,5 +1,5 @@
-use crate::gameplay::entities::Lifetime;
 use crate::gameplay::entities::MovingEntity;
+use crate::gameplay::entities::{EntityType, Lifetime};
 use crate::gameplay::gameplay_settings::{
     ENEMIES_PER_ROW, ENEMY_SPACING, ENEMY_SPEED, RESPAWN_TIME,
 };
@@ -33,6 +33,7 @@ impl EnemyWave {
             if initialized_timer.elapsed().as_secs() < RESPAWN_TIME {
                 return;
             }
+            self.timer = None;
             let mut x_axis: CoordinateMovement;
             let y_axis: CoordinateMovement = CoordinateMovement::new(
                 0.0,
@@ -49,7 +50,8 @@ impl EnemyWave {
                     ENEMY_SPEED,
                     BoundaryBehavior::Bounce,
                 );
-                let target = MovingEntity::new(ctx, x_axis, y_axis);
+                let mut target = MovingEntity::new(x_axis, y_axis);
+                target.set_entity_type(EntityType::Enemy, ctx);
                 self.enemies.push(target);
             }
         } else {

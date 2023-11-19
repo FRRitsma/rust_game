@@ -7,4 +7,3 @@ pub mod game_state;
 pub mod gameplay_settings;
 mod movement;
 mod shooting;
-mod targets;
