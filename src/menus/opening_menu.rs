@@ -7,7 +7,7 @@ use ggez::{event, glam, graphics, Context, GameResult};
 pub struct MenuState {
     options: Vec<String>,
     selected: usize,
-    pub active_state: ActiveState,
+    active_state: ActiveState,
 }
 
 impl event::EventHandler for MenuState {
@@ -63,6 +63,7 @@ impl event::EventHandler for MenuState {
             }
             Some(KeyCode::Return) => {
                 // Handle option selection
+
                 if self.selected == 0 {
                     self.active_state = ActiveState::Game;
                 }
@@ -74,7 +75,7 @@ impl event::EventHandler for MenuState {
 }
 
 impl MenuState {
-    pub fn new(_ctx: &mut Context) -> MenuState {
+    pub fn new() -> MenuState {
         // Initialize your menu state here.
         MenuState {
             options: vec![
@@ -86,4 +87,12 @@ impl MenuState {
             active_state: ActiveState::Menu,
         }
     }
+    pub fn next_state(&self) -> &ActiveState {
+        &self.active_state
+    }
+}
+
+#[test]
+fn test_initialize_menu_state() {
+    let _: MenuState = MenuState::new();
 }

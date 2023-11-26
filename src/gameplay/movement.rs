@@ -1,4 +1,4 @@
-use crate::entities::Lifetime;
+use crate::gameplay::entities::Lifetime;
 
 pub trait Position {
     fn get_min(&self) -> f32;
