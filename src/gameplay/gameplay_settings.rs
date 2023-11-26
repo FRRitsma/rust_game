@@ -13,3 +13,5 @@ pub const ENEMY_SCALE_HEIGHT: f32 = 80.0;
 pub const PROJECTILE_SPRITE: &str = "/woof-removebg-preview.png";
 pub const PROJECTILE_SCALE_WIDTH: f32 = 25.0;
 pub const PROJECTILE_SCALE_HEIGHT: f32 = 25.0;
+
+pub const PROJECTILE_RELOAD_TIME: u64 = 1;

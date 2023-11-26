@@ -1,5 +1,6 @@
 use crate::gameplay::movement::{Position, Update};
 use ggez;
+use std::time::Instant;
 
 use ggez::graphics::Image;
 
@@ -33,6 +34,7 @@ pub struct MovingEntity {
     sprite: Option<Image>,
     sprite_width: Option<f32>,
     sprite_height: Option<f32>,
+    pub shoot_timer: Option<Instant>,
     is_alive: bool,
 }
 
@@ -60,6 +62,7 @@ impl MovingEntity {
             sprite: None,
             sprite_width: None,
             sprite_height: None,
+            shoot_timer: None,
             is_alive: true,
         }
     }
@@ -70,6 +73,7 @@ impl MovingEntity {
     pub fn get_sprite_width(&self) -> f32 {
         self.sprite_width.unwrap()
     }
+
     pub fn get_sprite_height(&self) -> f32 {
         self.sprite_height.unwrap()
     }
@@ -85,6 +89,7 @@ impl MovingEntity {
         self.sprite = Some(Image::from_path(ctx, MAIN_PLAYER_SPRITE).unwrap());
         self.sprite_width = Some(MAIN_PLAYER_SCALE_WIDTH);
         self.sprite_height = Some(MAIN_PLAYER_SCALE_HEIGHT);
+        self.shoot_timer = Some(Instant::now());
     }
     fn set_enemy(&mut self, ctx: &mut Context) {
         self.sprite = Some(Image::from_path(ctx, ENEMY_SPRITE).unwrap());

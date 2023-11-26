@@ -39,7 +39,7 @@ impl Controllable for MovingEntity {
                 self.x_axis.set_velocity(0.0);
             }
             // Implement space bar lift of:
-            Some(KeyCode::Space) => return Some(self.spawn(ctx)),
+            Some(KeyCode::Space) => return self.spawn(ctx),
             _ => {}
         }
         None
